@@ -98,3 +98,25 @@ body,
   width: 940px;
   min-width: 920px;
 }
+
+#main {
+  width: 100%;
+}
+
+#sidebar-first, #sidebar-second {
+  width: 25%;
+}
+
+.no-sidebars #content {
+  width: 100%;
+  float: none;
+}
+
+.one-sidebar #content {
+  width: 75%;
+}
+
+.two-sidebars #content {
+  width: 50%;
+}
+
