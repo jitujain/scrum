@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * @file
+ * Module implementing scrum related functionality.
+ */
+
+/**
+ * Implements hook_page_alter().
+ */
+function scrum_general_apis_page_alter(&$page) {
+
+  $path = current_path();
+
+  $theme_path = drupal_get_path('theme', 'adminimal');
+  drupal_add_js($theme_path . '/js/scrum.js', 'file');
+  drupal_add_css($theme_path . '/css/scrum.css', 'file');
+  drupal_add_js(array('scrum_update_ajax' => array('scrum_ajaxUrl' => url('scrum/ajax'))), 'setting');
+
+  switch ($path) {
+    case 'testimonial':
+      break;
+  }
+}
+
+/**
+ * Implements hook_node_validate().
+ */
+function scrum_general_apis_node_validate($node, $form, &$form_state) {
+  $type = is_string($node) ? $node : $node->type;
+  if ($type == 'ct_scrum') {
+    $uid = $node->uid;
+    $query = db_select('node', 'n')
+    ->fields('n', array('created'))
+    ->condition('status', 1,'=')
+    ->condition('uid', $uid,'=')
+    ->condition('type', 'ct_scrum','=')
+    ->orderBy('created', 'DESC')
+    ->range(0,1)
+    ->execute()
+    ->fetchAssoc();
+
+    if (!empty($query)) {
+      $last_node_created_date = $query['created'];
+      $last_node_created_date = date('d-m-y', $last_node_created_date);
+      $today_date = date('d-m-y');
+      if ($last_node_created_date == $today_date) {
+        $errormessage = t('Sorry, you have created scrum for today');
+        form_set_error('time', $errormessage);
+      }
+    }
+  }
+}
+
+// /**
+//  * Implements hook_cron().
+//  */
+// function scrum_general_apis_cron() {
+//   $scrum_time = variable_get('scrum_time', 5);
+//   $current_time = date('G');
+//   if ($scrum_time == $current_time) {
+
+//     // Get all active scrums.
+//     if ($scrum_vocab = taxonomy_vocabulary_machine_name_load('vocab_scrum')) {
+//       $query = new EntityFieldQuery();
+//       $result = $query->entityCondition('entity_type', 'taxonomy_term')
+//       ->propertyCondition('vid', $scrum_vocab->vid)
+//       ->propertyOrderBy('weight')
+//       ->fieldCondition('field_ct_status', 'value', 1)
+//       ->execute();
+
+//       if (!empty($result) && isset($result['taxonomy_term'])) {
+//         $tids = array_keys($result['taxonomy_term']);
+
+//         // Get current date scrum for every project.
+//         $exclude_tids = array();
+//         if (!empty($tids)) {
+//           $start = date('U', mktime(0, 0, 0, date('n'), date('j'), date('Y')));
+//           $end = date('U', mktime(23, 59, 59, date('n'), date('j'), date('Y')));
+//           foreach ($tids as $tid) {
+//             $query = new EntityFieldQuery();
+//             $result = $query->entityCondition('entity_type', 'node')
+//             ->entityCondition('bundle', 'ct_scrum')
+//             ->propertyCondition('status', NODE_PUBLISHED)
+//             ->fieldCondition('field_ct_scrum', 'tid', $tid)
+//             ->range(0, 1)
+//             ->propertyCondition('created', array($start, $end), "between")
+//             ->execute();
+
+//             if (empty($result)) {
+//               $exclude_tids[] = $tid;
+//             }
+//           }
+
+//           if (!empty($exclude_tids)) {
+//             $terms = taxonomy_term_load_multiple($exclude_tids);
+//             $mail_ids = array();
+//             foreach ($terms as $term) {
+//               $user_id = field_get_items('taxonomy_term', $term, 'field_ct_scrum_master');
+//               if (isset($user_id[0]['target_id'])) {
+//                 $uid = $user_id[0]['target_id'];
+//                 $user = user_load($uid);
+//                 $mail_ids[] = isset($user->mail) ? $user->mail : NULL;
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

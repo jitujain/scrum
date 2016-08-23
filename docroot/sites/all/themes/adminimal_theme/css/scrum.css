@@ -1,0 +1,18 @@
+#block-views-views-scrum-last-scrum {
+  border: 10px solid;
+  padding: 10px;
+}
+
+#block-views-views-scrum-last-scrum .views-exposed-form {
+  display: none;
+}
+
+#block-views-views-scrum-last-scrum ul li:nth-child(2n+1) {
+  background-color: #abaaaa;
+  padding: 10px;
+}
+
+#block-views-views-scrum-last-scrum .views-label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}

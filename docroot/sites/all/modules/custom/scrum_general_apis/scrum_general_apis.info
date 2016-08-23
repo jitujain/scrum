@@ -1,0 +1,5 @@
+name = Scrum general apis
+description = Basic functionality related to scrum.
+core = 7.x
+package = Custom
+
